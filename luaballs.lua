@@ -906,11 +906,8 @@ local AimbotLoop = RunService:BindToRenderStep("updateAimbot", 1, function()
         local downed = false
         if menu.values[2].aimbot.targeting["down check"].Toggle then
             local Stats = GetCharStats(Player.Name)
-            if Stats and Stats:FindFirstChild("Downed").Value then
-                downed = true
-            end
+            downed = Stats and (Stats:FindFirstChild("Downed").Value == true) or false
         end
-
 
         if menu.values[2].aimbot.targeting["visible check"].Toggle then
             local Direction = Hitbox.Position - CameraPosition
@@ -920,18 +917,18 @@ local AimbotLoop = RunService:BindToRenderStep("updateAimbot", 1, function()
             local Hit, Pos  = Result.Instance, Result.Position
 
             if not Hit:FindFirstAncestor(Player.Name) then continue end
-            table.insert(ValidTargets, {Player, Hitbox, Magnitude, DistanceFromCharacter, Humanoid.Health, downed})
+            table.insert(ValidTargets, {Player, Hitbox, Magnitude, DistanceFromCharacter, Humanoid.Health, downed == false})
         else
-            table.insert(ValidTargets, {Player, Hitbox, Magnitude, DistanceFromCharacter, Humanoid.Health, downed})
+            table.insert(ValidTargets, {Player, Hitbox, Magnitude, DistanceFromCharacter, Humanoid.Health, downed == false})
         end
     end
 
     if menu.values[2].aimbot.targeting.prioritize.Dropdown == "crosshair" then
-        table.sort(ValidTargets, function(a, b) return a[3] < b[3] and not a[6] end)
+        table.sort(ValidTargets, function(a, b) return a[3] < b[3] and a[6] == true end)
     elseif menu.values[2].aimbot.targeting.prioritize.Dropdown == "distance" then
-        table.sort(ValidTargets, function(a, b) return a[4] < b[4] and not a[6] end)
+        table.sort(ValidTargets, function(a, b) return a[4] < b[4] and a[6] == true end)
     elseif menu.values[2].aimbot.targeting.prioritize.Dropdown == "lowest hp" then
-        table.sort(ValidTargets, function(a, b) return a[5] < b[5] and not a[6] end)
+        table.sort(ValidTargets, function(a, b) return a[5] < b[5] and a[6] == true end)
     end
 
     if menu.values[2].aimbot.assist.enabled.Toggle and menu.values[2].aimbot.assist["$enabled"].Active then
